@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { List, Icon, showToast, Toast, Action, ActionPanel, Form, useNavigation, Color } from "@raycast/api";
+import { useState, useEffect } from "react";
+import { List, Icon, showToast, Toast, Action, ActionPanel, Form, useNavigation } from "@raycast/api";
 import { DEFAULT_PRESETS, COMMON_EMOJIS } from "./presets";
 import { emojis, getEmojiForCode, getCodeForEmoji } from "./emojis";
+import { authorize, getUser } from "./oauth";
 
 interface StatusPreset {
   emoji: string;
@@ -49,6 +50,56 @@ function StatusListItem({
 export default function SetDiscordStatus() {
   const [searchText, setSearchText] = useState("");
   const [currentStatus, setCurrentStatus] = useState<StatusPreset | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const handleAuth = async () => {
+    setIsAuthenticating(true);
+    try {
+      const token = await authorize();
+      const userData = await getUser(token);
+      setUser(userData);
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Failed to connect to Discord",
+        message: String(error),
+      });
+    } finally {
+      setIsAuthenticating(false);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleAuth();
+  }, []);
+
+  if (isLoading || isAuthenticating) {
+    return <List isLoading={true} searchBarPlaceholder="Connecting to Discord..." />;
+  }
+
+  if (!user) {
+    return (
+      <List>
+        <List.EmptyView
+          icon="discord-icon.png"
+          title="Connect Discord Account"
+          description="Please authenticate with Discord to use this extension"
+          actions={
+            <ActionPanel>
+              <Action 
+                title="Connect Discord Account" 
+                onAction={handleAuth}
+                icon={Icon.Link} 
+              />
+            </ActionPanel>
+          }
+        />
+      </List>
+    );
+  }
 
   const setStatus = async (preset: StatusPreset) => {
     try {
@@ -144,7 +195,6 @@ function CustomStatusForm({
 
   const handleEmojiChange = (value: string) => {
     if (value.startsWith(":")) {
-      // Handle emoji code input
       setEmoji(getEmojiForCode(value));
     } else {
       setEmoji(value);

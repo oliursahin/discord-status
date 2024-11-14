@@ -7,7 +7,12 @@
 
 /* eslint-disable @typescript-eslint/ban-types */
 
-type ExtensionPreferences = {}
+type ExtensionPreferences = {
+  /** Discord Client ID - Client ID from your Discord application */
+  "clientId": string,
+  /** Discord Client Secret - Client Secret from your Discord application */
+  "clientSecret": string
+}
 
 /** Preferences accessible in all the extension's commands */
 declare type Preferences = ExtensionPreferences
