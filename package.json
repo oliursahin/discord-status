@@ -1,45 +1,31 @@
 {
-  "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "discord-status",
-  "title": "discord status",
-  "description": "This will change status in discord like slack status",
-  "icon": "extension-icon.png",
-  "author": "oliursahin",
-  "owner": "march",
-  "categories": [
-    "Productivity"
-  ],
+  "title": "Discord Status",
+  "description": "Set Discord status",
+  "icon": "command-icon.png",
+  "author": "your-name",
   "license": "MIT",
   "commands": [
     {
       "name": "set-discord-status",
-      "title": "Set discord status",
-      "subtitle": "set stat",
-      "description": "this will open up a from where you can select any status or type your own",
+      "title": "Set Discord Status",
+      "description": "Set your Discord status",
       "mode": "view"
     }
   ],
-  "dependencies": {
-    "@raycast/api": "^1.85.2",
-    "@raycast/utils": "^1.17.0"
-  },
-  "devDependencies": {
-    "@raycast/eslint-config": "^1.0.11",
-    "@types/node": "20.8.10",
-    "@types/react": "18.3.3",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.3.3",
-    "typescript": "^5.4.5"
-  },
   "scripts": {
     "build": "ray build",
     "dev": "ray develop",
-    "fix-lint": "ray lint --fix",
-    "lint": "ray lint",
-    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
-    "publish": "npx @raycast/api@latest publish"
+    "lint": "ray lint"
+  },
+  "dependencies": {
+    "@raycast/api": "^1.55.2",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "@raycast/utils": "^1.10.0",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.27",
+    "typescript": "^5.2.2"
   }
 }
