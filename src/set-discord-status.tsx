@@ -52,31 +52,62 @@ export default function SetDiscordStatus() {
   const [currentStatus, setCurrentStatus] = useState<StatusPreset | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  useEffect(() => {
+    async function initializeAuth() {
+      console.log("Starting initialization");
+      try {
+        console.log("Attempting to authorize");
+        const token = await authorize();
+        console.log("Authorization successful, token received");
+        
+        if (token) {
+          console.log("Fetching user data");
+          const userData = await getUser(token);
+          console.log("User data received:", userData);
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error("Initialization error:", error);
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Failed to connect to Discord",
+          message: String(error),
+        });
+      } finally {
+        console.log("Setting loading state to false");
+        setIsLoading(false);
+      }
+    }
+
+    initializeAuth();
+  }, []);
 
   const handleAuth = async () => {
-    setIsAuthenticating(true);
+    console.log("Manual auth initiated");
+    setIsLoading(true);
     try {
       const token = await authorize();
-      const userData = await getUser(token);
-      setUser(userData);
+      console.log("Manual auth successful");
+      if (token) {
+        const userData = await getUser(token);
+        console.log("User data fetched:", userData);
+        setUser(userData);
+      }
     } catch (error) {
+      console.error("Manual auth error:", error);
       await showToast({
         style: Toast.Style.Failure,
         title: "Failed to connect to Discord",
         message: String(error),
       });
     } finally {
-      setIsAuthenticating(false);
+      console.log("Setting loading state to false after manual auth");
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    handleAuth();
-  }, []);
-
-  if (isLoading || isAuthenticating) {
+  if (isLoading) {
     return <List isLoading={true} searchBarPlaceholder="Connecting to Discord..." />;
   }
 
